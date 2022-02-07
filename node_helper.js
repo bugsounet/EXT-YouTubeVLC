@@ -12,6 +12,8 @@ module.exports = NodeHelper.create({
     this.config = {}
     this.Lib = []
     this.searchInit = false
+    this.YouTube = null
+    this.YT = 0
   },
 
   socketNotificationReceived: function (notification, payload) {
@@ -23,13 +25,21 @@ module.exports = NodeHelper.create({
       case "YT_SEARCH":
         this.YoutubeSearch(payload)
         break
+      case "YT_PLAY":
+        this.playWithVlc(this.YouTubeLink(payload))
+        break
+      case "YT_CLOSE":
+        this.CloseVlc()
+        break
+      case "YT_VOLUME":
+        this.VolumeVLC(payload)
+        break
     }
   },
 
   initialize: async function() {
-    var debug = (this.config.debug) ? this.config.debug : false
     if (this.config.debug) log = (...args) => { console.log("[YT]", ...args) }
-    log("Starting YouTube module...")
+    log("Starting YouTubeVLC module...")
     log("Config:", this.config)
     if (this.config.useSearch) {
       log("Check credentials.json...")
@@ -49,7 +59,7 @@ module.exports = NodeHelper.create({
       let bugsounet = await this.loadBugsounetLibrary()
       if (bugsounet) {
         console.error("[YT] Warning:", bugsounet, "library not loaded !")
-        console.error("[YT] Try to solve it with `npm install` in EXT-YouTube directory")
+        console.error("[YT] Try to solve it with `npm install` in EXT-YouTubeVLC directory")
         return
       }
       else {
@@ -76,7 +86,7 @@ module.exports = NodeHelper.create({
         return
       }
     }
-    console.log("[YT] EXT-YouTube is Ready.")
+    console.log("[YT] EXT-YouTubeVLC is Ready.")
   },
 
   /** Load require @busgounet library **/
@@ -86,7 +96,8 @@ module.exports = NodeHelper.create({
       // { "library to load" : [ "store library name", "path to check" ] }
       { "youtube-api": [ "YouTubeAPI", "useSearch"] },
       { "he": [ "he", "useSearch" ] },
-      { "r-json": [ "readJson","useSearch" ] }
+      { "r-json": [ "readJson","useSearch" ] },
+      { "@bugsounet/cvlc": [ "cvlc", "maxVolume" ] }
     ]
 
     let errors = 0
@@ -104,7 +115,7 @@ module.exports = NodeHelper.create({
             try {
               if (!this.Lib[libraryName]) {
                 this.Lib[libraryName] = require(libraryToLoad)
-                log("Loaded " + libraryToLoad)
+                log("Loaded:", libraryToLoad)
               }
             } catch (e) {
               this.sendSocketNotification("YT_LIBRARY_ERROR", libraryToLoad)
@@ -125,12 +136,59 @@ module.exports = NodeHelper.create({
       var results = await this.Lib.YouTubeAPI.search.list({q: query, part: 'snippet', maxResults: 1, type: "video"})
       var item = results.data.items[0]
       var title = this.Lib.he.decode(item.snippet.title)
-      console.log('[YT] Found YouTube Title: %s - videoId: %s', title, item.id.videoId)
-      this.sendSocketNotification("YT_FOUND", title)
-      this.sendSocketNotification("YT_RESULT", item.id.videoId)
+      log('Found YouTube Title: %s - videoId: %s', title, item.id.videoId)
+      this.sendSocketNotification("YT_FOUND", { title: title, id: item.id.videoId })
     } catch (e) {
-      console.error("[YT] YouTube Search error: ", e.toString())
+      console.error("[YT] YouTube Search error:", e.toString())
       this.sendSocketNotification("YT_SEARCH_ERROR")
     }
+  },
+
+  /** youtube control with VLC **/
+  playWithVlc: function (link) {
+    this.YT++
+    if (this.YouTube) this.CloseVlc()
+    this.YouTube = new this.Lib.cvlc()
+    this.YouTube.play(
+      link,
+      ()=> {
+        log("Found link:", link)
+         if (this.YouTube) this.YouTube.cmd("volume "+ this.config.maxVolume)
+      },
+      ()=> {
+        this.YT--
+        if (this.YT < 0) this.YT = 0
+        log("Video ended #" + this.YT)
+        if (this.YT == 0) {
+          log("Finish !")
+          this.sendSocketNotification("YT_FINISH")
+          this.YouTube = null
+        }
+      }
+    )
+  },
+
+  CloseVlc: function () {
+    if (this.YouTube) {
+      log("Force Closing VLC...")
+      this.YouTube.destroy()
+      this.YouTube = null
+      log("Done Closing VLC...")
+    }
+    else {
+      log("Not running!")
+    }
+  },
+
+  VolumeVLC: function(volume) {
+    if (this.YouTube) {
+      log("Set VLC Volume to:", volume)
+      this.YouTube.cmd("volume " + volume)
+    }
+  },
+
+  YouTubeLink: function (id) {
+    let link= "https://www.youtube.com/watch?v=" + id
+    return link
   },
 })

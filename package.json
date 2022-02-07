@@ -1,9 +1,9 @@
 {
-  "name": "EXT-YouTube",
+  "name": "EXT-YouTubeVLC",
   "version": "1.0.0",
-  "rev": "220206-2",
-  "description": "YouTube Player",
-  "main": "EXT-YouTube.js",
+  "rev": "220207-1",
+  "description": "YouTube Player with VLC for MagicMirror",
+  "main": "EXT-YouTubeVLC.js",
   "scripts": {
     "token": "node installer/auth_YouTube.js",
     "preinstall": "installer/preinstall.sh",
@@ -18,12 +18,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bugsounet/EXT-YouTube"
+    "url": "https://github.com/bugsounet/EXT-YouTubeVLC"
   },
   "bugs": {
     "url": "https://forum.bugsounet.fr"
   },
   "dependencies": {
+    "@bugsounet/cvlc": "^1.0.5",
     "he": "^1.2.0",
     "open": "^6.4.0",
     "r-json": "^1.2.10",

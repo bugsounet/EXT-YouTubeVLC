@@ -14,7 +14,7 @@ var recipe = {
     "YouTube_SEARCH": {
       functionExec: {
         exec: (params) => {
-          this.sendNotification("EXT_YOUTUBE-SEARCH", params[1])
+          this.sendNotification("EXT_YOUTUBEVLC-SEARCH", params[1])
         }
       },
       soundExec: {
