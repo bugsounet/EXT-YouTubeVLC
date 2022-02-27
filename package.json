@@ -1,13 +1,14 @@
 {
   "name": "EXT-YouTubeVLC",
   "version": "1.0.0",
-  "rev": "220207-1",
+  "rev": "220227",
   "description": "YouTube Player with VLC for MagicMirror",
   "main": "EXT-YouTubeVLC.js",
   "scripts": {
     "token": "node installer/auth_YouTube.js",
     "preinstall": "installer/preinstall.sh",
-    "postinstall": "installer/postinstall.sh"
+    "postinstall": "installer/postinstall.sh",
+    "update": "installer/update.sh"
   },
   "keywords": [
     "magic mirror",

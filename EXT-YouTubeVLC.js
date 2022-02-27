@@ -6,7 +6,7 @@ logYT = (...args) => { /* do nothing */ }
 
 Module.register("EXT-YouTubeVLC", {
   defaults: {
-    debug: true,
+    debug: false,
     useSearch: true,
     displayHeader: true,
     minVolume: 30,
@@ -113,9 +113,9 @@ Module.register("EXT-YouTubeVLC", {
   },
 
   getDom: function() {
-    var wrapper = document.createElement('div')
-    wrapper.className = "hidden"
-    return wrapper
+    var dom = document.createElement("div")
+    dom.style.display = 'none'
+    return dom
   },
 
   getTranslations: function() {
