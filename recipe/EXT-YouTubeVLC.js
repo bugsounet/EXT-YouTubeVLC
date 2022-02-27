@@ -1,6 +1,6 @@
-/** Vocal control for EXT-YouTube **/
+/** Vocal control for EXT-YouTubeVLC **/
 /**  @bugsounet  **/
-/** 06/02/2022 **/
+/** 27/02/2022 **/
 
 var recipe = {
   transcriptionHooks: {

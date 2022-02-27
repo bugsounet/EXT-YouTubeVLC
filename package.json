@@ -1,7 +1,7 @@
 {
   "name": "EXT-YouTubeVLC",
   "version": "1.0.0",
-  "rev": "220225",
+  "rev": "220227",
   "description": "YouTube Player with VLC for MagicMirror",
   "main": "EXT-YouTubeVLC.js",
   "scripts": {
