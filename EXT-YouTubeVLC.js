@@ -23,7 +23,7 @@ Module.register("EXT-YouTubeVLC", {
     this.initializeVolumeVLC()
   },
 
-  notificationReceived: function(notification, payload) {
+  notificationReceived: function(notification, payload, sender) {
     switch (notification) {
       case "DOM_OBJECTS_CREATED":
         logYT("Go YouTube VLC!")
