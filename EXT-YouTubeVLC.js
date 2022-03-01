@@ -27,7 +27,9 @@ Module.register("EXT-YouTubeVLC", {
     switch (notification) {
       case "DOM_OBJECTS_CREATED":
         logYT("Go YouTube VLC!")
-        this.sendNotification("EXT_HELLO", this.name)
+        break
+      case "GAv4_READY":
+        if (sender.name == "MMM-GoogleAssistant") this.sendNotification("EXT_HELLO", this.name)
         break
       case "EXT_YOUTUBEVLC-PLAY":
         this.Started()
