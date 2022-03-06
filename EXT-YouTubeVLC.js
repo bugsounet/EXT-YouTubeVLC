@@ -23,11 +23,13 @@ Module.register("EXT-YouTubeVLC", {
     this.initializeVolumeVLC()
   },
 
-  notificationReceived: function(notification, payload) {
+  notificationReceived: function(notification, payload, sender) {
     switch (notification) {
       case "DOM_OBJECTS_CREATED":
         logYT("Go YouTube VLC!")
-        this.sendNotification("EXT_HELLO", this.name)
+        break
+      case "GAv4_READY":
+        if (sender.name == "MMM-GoogleAssistant") this.sendNotification("EXT_HELLO", this.name)
         break
       case "EXT_YOUTUBEVLC-PLAY":
         this.Started()
