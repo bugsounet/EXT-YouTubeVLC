@@ -1,4 +1,4 @@
-/** MMM-YouTube helper **/
+/** EXT-YouTubeVLC helper **/
 
 "use strict"
 var NodeHelper = require("node_helper")
@@ -41,6 +41,18 @@ module.exports = NodeHelper.create({
     if (this.config.debug) log = (...args) => { console.log("[YT]", ...args) }
     log("Starting YouTubeVLC module...")
     log("Config:", this.config)
+
+    let bugsounet = await this.loadBugsounetLibrary()
+    if (bugsounet) {
+      console.error("[YT] Warning:", bugsounet, "library not loaded !")
+      console.error("[YT] Try to solve it with `npm install` in EXT-YouTubeVLC directory")
+      return
+    }
+    else {
+      console.log("[YT] All needed library loaded !")
+      log("Library:", this.Lib)
+    }
+
     if (this.config.useSearch) {
       log("Check credentials.json...")
       if (fs.existsSync(__dirname + "/credentials.json")) {
@@ -56,15 +68,6 @@ module.exports = NodeHelper.create({
       }
       else log("credentials.json found in", this.config.CREDENTIALS)
 
-      let bugsounet = await this.loadBugsounetLibrary()
-      if (bugsounet) {
-        console.error("[YT] Warning:", bugsounet, "library not loaded !")
-        console.error("[YT] Try to solve it with `npm install` in EXT-YouTubeVLC directory")
-        return
-      }
-      else {
-        console.log("[YT] All needed library loaded !")
-      }
       try {
         var CREDENTIALS = this.Lib.readJson(this.config.CREDENTIALS)
         CREDENTIALS = CREDENTIALS.installed || CREDENTIALS.web
