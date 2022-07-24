@@ -123,7 +123,8 @@ Module.register("EXT-YouTubeVLC", {
   getTranslations: function() {
     return {
       en: "translations/en.json",
-      fr: "translations/fr.json"
+      fr: "translations/fr.json",
+      el: "translations/el.json"
     }
   },
 
